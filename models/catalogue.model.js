@@ -1,19 +1,18 @@
 const mongoose = require('mongoose')
 
+// const catalogueSchema = new mongoose.Schema({
+//         name: {
+//             type: String,
+//             require: true
+//         }
+// })
+
+
 const catalogueSchema = new mongoose.Schema({
-    restaurant_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Restaurant'
-    },
-    categories: [{
-        name: {
-            type: String
-        },
-        items: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Item'
-        }]
-    }]
+    name: {
+        type:String,
+        require: true
+    }
 })
 
 const Catalogue = mongoose.model('Catalogue', catalogueSchema)

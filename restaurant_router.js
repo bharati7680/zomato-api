@@ -3,6 +3,7 @@ const router = express.Router()
 
 const CuisineModel = require('./models/cuisine.model')
 const RestaurantModel = require('./models/restaurant.model')
+const CatalogueModel = require('./models/catalogue.model')
 
 
 
@@ -112,6 +113,21 @@ router.get('/details', async (req, res) => {
     res.send({
         message: "retrieved restaurant successfully",
         restaurants
+    })
+
+})
+
+router.post('/category', async (req, res) => {
+
+    const name = req.body
+
+    const Category = new CatalogueModel({name})
+    
+    await Category.save()
+
+    res.send({
+        message: "category created successfully",
+        Category
     })
 
 })

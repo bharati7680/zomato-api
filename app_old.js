@@ -290,7 +290,7 @@ app.post('/api/restaurant', async (req, res) => {
 
 //* Category APIs
 
-app.post('/api/restaurant/category', async (req, res) => {
+app.post('/api/restaurant/categories', async (req, res) => {
     const { name, restaurant_id } = req.body
 
     let catalouge = await CatalogueModel.findOne({restaurant_id: restaurant_id})
