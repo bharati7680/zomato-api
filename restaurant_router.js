@@ -22,7 +22,7 @@ router.get('/cuisine', async (req, res) => {
 //  Restaurant Api's
 
 router.post('/add', async (req, res) => {
-    
+    const user_id = req.user.id
     const {
         name,
         contact, 
@@ -35,12 +35,12 @@ router.post('/add', async (req, res) => {
         opening_days,
         restaurant_images,
         food_images,
-        approval_status,
-        rejection_reason  } = req.body
+    } = req.body
 
         
 
-    Restaurant = new RestaurantModel({
+   let restaurant = new RestaurantModel({
+        user_id,
         name, 
         contact, 
         email, 
@@ -51,21 +51,19 @@ router.post('/add', async (req, res) => {
         time_slot,
         opening_days,
         restaurant_images,
-        food_images,
-        approval_status,
-        rejection_reason
+        food_images
     })
 
-    await Restaurant.save()
+    await restaurant.save()
 
     res.send({
-        message: "Restaurant added successfully",
-        Restaurant
+        message: " created Restaurant successfully",
+        restaurant
     })
 })
 
 
-router.put('/edit', async (req, res) => {
+router.put('/edit/:restaurant_id', async (req, res) => {
     const {
         name,
         contact, 
@@ -77,38 +75,46 @@ router.put('/edit', async (req, res) => {
         time_slot,
         opening_days,
         restaurant_images,
-        food_images,
-        approval_status,
-        rejection_reason
+        food_images
     } = req.body
 
-    Restaurant = new RestaurantModel({
-        name, 
-        contact, 
-        email, 
-        address,
-        latitude,
-        longitude,
-        cuisines, 
-        time_slot,
-        opening_days,
-        restaurant_images,
-        food_images,
-        approval_status,
-        rejection_reason
-    })
+    const id = req.params.restaurant_id;
 
-    await Restaurant.save()
+    const restaurant = await RestaurantModel.findById(id)
+
+
+    restaurant.name = name
+
+    restaurant.save()
 
     res.send({
-        message: "Restaurant added successfully",
-        Restaurant
+        message: "Updated Restaurant Successfully",
+        restaurant
     })
 })
 
-router.get('/details', async (req, res) => {
+router.get('/details/:restaurant_id', async (req, res) => {
 
-    const restaurants = await RestaurantModel.find()
+    let id = req.params.restaurant_id
+    console.log(req.params)
+    
+    const restaurant = await RestaurantModel.findById(id)
+    console.log(restaurant)
+
+    res.send({
+        message: "retrieved restaurant successfully",
+        restaurant
+    })
+
+})
+
+router.get('/list', async (req, res) => {
+
+    let user_id = req.user.id
+    console.log(req.user)
+    
+    const restaurants = await RestaurantModel.find({user_id}, {name:1, approval_status:1, rejection_reason:1 })
+    console.log(restaurants)
 
     res.send({
         message: "retrieved restaurant successfully",
@@ -116,6 +122,7 @@ router.get('/details', async (req, res) => {
     })
 
 })
+ 
 
 router.post('/category', async (req, res) => {
 
@@ -133,3 +140,4 @@ router.post('/category', async (req, res) => {
 })
 
 module.exports = router
+

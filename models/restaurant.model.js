@@ -13,6 +13,10 @@ const restaurantSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     // location: {
     //     type:{
     //         type: String,
@@ -39,7 +43,8 @@ const restaurantSchema = new mongoose.Schema({
     cuisines: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Cuisine'
+            ref: 'Cuisine',
+            require: true
         }
     ], 
     time_slot: [
@@ -56,12 +61,15 @@ const restaurantSchema = new mongoose.Schema({
     ], 
     restaurant_images: [
         {
-            type: String
+            type: String,
+            require: true
+
         }
     ], 
     food_images: [
         {
-            type: String
+            type: String,
+            require: true
         }
     ], 
     approval_status: {
@@ -70,7 +78,8 @@ const restaurantSchema = new mongoose.Schema({
         default: 'PENDING'
     }, 
     rejection_reason: {
-        type: String
+        type: String,
+        default: ""
     },
     created_at: {
         type : Date,

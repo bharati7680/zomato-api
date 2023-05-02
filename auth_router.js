@@ -8,7 +8,7 @@ const UserModel = require('./models/user.model')
 router.post('/signup', async (req, res) => {
 
         
-         const {first_name, last_name, email, password} = req.body
+         const {first_name, last_name, email, password, user_type} = req.body
 
         let User = await UserModel.findOne({email})
     
@@ -26,7 +26,8 @@ router.post('/signup', async (req, res) => {
             first_name,
             last_name,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            user_type  
         }
     
         const savedUser = await UserModel.create(newUser)
@@ -35,6 +36,7 @@ router.post('/signup', async (req, res) => {
             {
               id: savedUser.id,
               email: savedUser.email,
+              user_type: savedUser.user_type
             },
             "secret"
         );
@@ -46,9 +48,15 @@ router.post('/signup', async (req, res) => {
                 firstName: savedUser.first_name,
                 lastName: savedUser.last_name,
                 email: savedUser.email,
+                user_type: savedUser.user_type,
                 token: userJwt
             }
         })
+    })
+
+    router.get('/userlist', async (req,res) => {
+        let users = await UserModel.find()
+        res.send(users)
     })
 
     router.post('/login', async (req, res) =>  {
@@ -80,7 +88,7 @@ router.post('/signup', async (req, res) => {
         const userJwt = jwt.sign(
             {
               id: user.id,
-              email: user.email,
+              email: user.email
             },
             "secret"
         );
@@ -88,11 +96,12 @@ router.post('/signup', async (req, res) => {
     
         res.send({
             error: false,
-            message: "Login successfull",
+            message: "Login successfully",
             data: {
-                firstName: user.firstName,
-                lastName: user.lastName,
+                firstName: user.first_name,
+                lastName: user.last_name,
                 email: user.email,
+                user_id: user._id,
                 token: userJwt
             }
         })
