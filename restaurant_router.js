@@ -89,7 +89,23 @@ router.put('/edit/:restaurant_id', async (req, res) => {
 
     const id = req.params.restaurant_id;
 
-    const updatedRestaurant = await RestaurantModel.findByIdAndUpdate(id, req.body, {new: true})
+    const updatedRestaurant = await RestaurantModel.findByIdAndUpdate(
+        id,
+        {
+            name,
+            contact, 
+            email, 
+            address,
+            latitude,
+            longitude,
+            cuisines, 
+            time_slot,
+            opening_days,
+            restaurant_images,
+            food_images
+        },
+        {new: true}
+    )
 
 
     // restaurant.name = name
@@ -208,18 +224,29 @@ router.post('/item', async (req, res) => {
 router.put('/item/:item_id', async (req, res) => {
 
     const {
-        name,
-        category_id,
-        price,
-        description,
-        image_url,
-        is_veg
+            name,
+            category_id,
+            price,
+            description,
+            image_url,
+            is_veg
     } = req.body
 
     const id = req.params.item_id;
     // console.log(id)
 
-    const updatedItem = await ItemModel.findByIdAndUpdate(id, req.body , {new: true})
+    const updatedItem = await ItemModel.findByIdAndUpdate(
+        id, 
+        {
+            name,
+            category_id,
+            price,
+            description,
+            image_url,
+            is_veg
+        }, 
+        {new: true}
+    )
     // console.log()
 
 
@@ -244,12 +271,8 @@ router.get('/catalogue/:restaurant_id', async (req, res) => {
     
     const id = req.params.restaurant_id
     console.log(id)
-    // const Item = await ItemModel.find()
-    const catalogue = await CatalogueModel.findById(id)
-
-    // let itemCategoryId =  Item.category_id
-    // let catalogueCategoryId = catalogue._id
     
+    const catalogue = await CatalogueModel.findOne({restaurant_id: id})
 
     res.send({
         message: "retrieved catalogue successfully",
