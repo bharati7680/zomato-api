@@ -6,9 +6,9 @@ const CuisineModel = require('./models/cuisine.model')
 
 router.post('/cuisine', async (req, res) => {
 
-    const {name, status} = req.body
+    const {name} = req.body
 
-    Cuisine = new CuisineModel({name, status})
+    Cuisine = new CuisineModel({name})
 
     await Cuisine.save()
 

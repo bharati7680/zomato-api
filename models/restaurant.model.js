@@ -1,6 +1,10 @@
 const mongoose = require('mongoose')
 
 const restaurantSchema = new mongoose.Schema({
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     name: {
         type: String,
         required: true
@@ -13,33 +17,21 @@ const restaurantSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    user_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    // location: {
-    //     type:{
-    //         type: String,
-    //         enum: ['Point'],
-    //         required: true,
-    //     },
-    //     coordinates:{
-    //         type: [Number],
-    //         required: true
-    //     }
-    // },
     address: {
         type: String,
         required: true
+    }, 
+    location: {
+        type:{
+            type: String,
+            enum: ['Point'],
+            required: true,
+        },
+        coordinates:{
+            type:[Number],
+            required: true
+        }
     },
-    latitude: {
-        type: Number, 
-        required: true
-    }, 
-    longitude: {
-        type: Number, 
-        required: true
-    }, 
     cuisines: [
         {
             type: mongoose.Schema.Types.ObjectId,

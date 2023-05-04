@@ -4,6 +4,7 @@ const router = express.Router()
 const CuisineModel = require('./models/cuisine.model')
 const RestaurantModel = require('./models/restaurant.model')
 const CatalogueModel = require('./models/catalogue.model')
+const ItemModel = require('./models/item.model')
 
 
 
@@ -22,14 +23,16 @@ router.get('/cuisine', async (req, res) => {
 //  Restaurant Api's
 
 router.post('/add', async (req, res) => {
+    
     const user_id = req.user.id
+
     const {
         name,
         contact, 
         email, 
         address,
-        latitude,
         longitude,
+        latitude,
         cuisines, 
         time_slot,
         opening_days,
@@ -37,16 +40,22 @@ router.post('/add', async (req, res) => {
         food_images,
     } = req.body
 
-        
 
+    let location = {
+		type: "Point",
+		coordinates: [
+            longitude, 
+            latitude
+        ]
+	}
+        
    let restaurant = new RestaurantModel({
         user_id,
         name, 
         contact, 
         email, 
         address,
-        latitude,
-        longitude,
+        location,
         cuisines, 
         time_slot,
         opening_days,
@@ -57,7 +66,7 @@ router.post('/add', async (req, res) => {
     await restaurant.save()
 
     res.send({
-        message: " created Restaurant successfully",
+        message: "created Restaurant successfully",
         restaurant
     })
 })
@@ -80,26 +89,26 @@ router.put('/edit/:restaurant_id', async (req, res) => {
 
     const id = req.params.restaurant_id;
 
-    const restaurant = await RestaurantModel.findById(id)
+    const updatedRestaurant = await RestaurantModel.findByIdAndUpdate(id, req.body, {new: true})
 
 
-    restaurant.name = name
+    // restaurant.name = name
 
-    restaurant.save()
+    // restaurant.save()
 
     res.send({
         message: "Updated Restaurant Successfully",
-        restaurant
+        updatedRestaurant
     })
 })
 
 router.get('/details/:restaurant_id', async (req, res) => {
 
     let id = req.params.restaurant_id
-    console.log(req.params)
+    // console.log(req.params)
     
     const restaurant = await RestaurantModel.findById(id)
-    console.log(restaurant)
+    // console.log(restaurant)
 
     res.send({
         message: "retrieved restaurant successfully",
@@ -107,6 +116,8 @@ router.get('/details/:restaurant_id', async (req, res) => {
     })
 
 })
+
+// Retrieve Restaurants details of particular user/owner (restaurant)
 
 router.get('/list', async (req, res) => {
 
@@ -122,22 +133,145 @@ router.get('/list', async (req, res) => {
     })
 
 })
- 
+
+// catalogue Api's
 
 router.post('/category', async (req, res) => {
 
-    const name = req.body
+    const { restaurant_id, category_name } = req.body
 
-    const Category = new CatalogueModel({name})
+    let catalouge = await CatalogueModel.findOne({restaurant_id: restaurant_id})
+
+    if(!catalouge) {
+        catalouge = new CatalogueModel({
+            restaurant_id: restaurant_id,
+            categories: []
+        })
+    }
+
+    catalouge.categories.push({
+        name: category_name,
+        items: []
+    })
     
-    await Category.save()
+    await catalouge.save()
 
     res.send({
-        message: "category created successfully",
-        Category
+        message: "category added successfully",
+        catalouge
+    })
+})
+
+// Item Apis
+
+router.post('/item', async (req, res) => {
+    const {
+        restaurant_id, 
+        category_id,
+        name,
+        price,
+        description,
+        image_url,
+        is_veg
+    } = req.body
+
+    const catalogue = await CatalogueModel.findOne({restaurant_id}) 
+    // console.log(catalogue)
+
+    const item = new ItemModel({
+        name, 
+        category_id,
+        price,
+        description,
+        image_url,
+        is_veg
+    })
+   let itemResult = await item.save()
+
+
+    // const catalogue = await CatalogueModel.findOne({restaurant_id})
+
+    const category = catalogue.categories.find(category => category._id.toString() === category_id)
+    if(!category.items){
+        category.items = []
+    }
+    category.items.push(itemResult._id)
+
+    await catalogue.save()  
+
+    res.send({
+        message: "Item created successfully",
+        item
+    })
+}) 
+
+router.put('/item/:item_id', async (req, res) => {
+
+    const {
+        name,
+        category_id,
+        price,
+        description,
+        image_url,
+        is_veg
+    } = req.body
+
+    const id = req.params.item_id;
+    // console.log(id)
+
+    const updatedItem = await ItemModel.findByIdAndUpdate(id, req.body , {new: true})
+    // console.log()
+
+
+        // Item.name = name,
+        // Item.category_id = category_id,
+        // Item.price = price,
+        // Item.description = description,
+        // Item.image_url = image_url,
+        // Item.is_veg = is_veg 
+        
+        // updatedItem.save()
+
+    res.send({
+        message: "Updated Item Successfully",
+        updatedItem
+        
     })
 
 })
+
+router.get('/catalogue/:restaurant_id', async (req, res) => {
+    
+    const id = req.params.restaurant_id
+    console.log(id)
+    // const Item = await ItemModel.find()
+    const catalogue = await CatalogueModel.findById(id)
+
+    // let itemCategoryId =  Item.category_id
+    // let catalogueCategoryId = catalogue._id
+    
+
+    res.send({
+        message: "retrieved catalogue successfully",
+        catalogue
+    })
+})
+
+
+// router.get('/item/details', async (req, res) => {
+
+//         // const category = await CatalogueModel.findById(id)
+//         const itemDetails = await ItemModel.find()
+
+
+//         res.send({
+//             message: "Retrieves Item Details Successfully",
+//             itemDetails
+//         })
+// })
+
+
+
 
 module.exports = router
 
