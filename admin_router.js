@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 const CuisineModel = require('./models/cuisine.model')
+const RestaurantModel = require('./models/restaurant.model')
 
 
 router.post('/cuisine', async (req, res) => {
@@ -26,6 +27,16 @@ router.get('/cuisine', async (req, res) => {
         message: "Cuisines retrieved successfully",
         Cuisines
      })
+})
+
+router.get('/restaurant', async (req, res) => {
+
+    let restaurantStatus = req.params.verification_status='PENDING'
+
+    const restaurant = await RestaurantModel.find()
+    // console.log(restaurant)
+
+    res.send(restaurant)
 })
 
 module.exports = router
