@@ -33,7 +33,7 @@ router.get('/restaurant', async (req, res) => {
 
     let restaurantStatus = req.params.verification_status='PENDING'
 
-    const restaurant = await RestaurantModel.find()
+    const restaurant = await RestaurantModel.find(  )
     // console.log(restaurant)
 
     res.send(restaurant)

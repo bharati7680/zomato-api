@@ -1,5 +1,7 @@
 const express = require('express')
 const router = express.Router()
+const opencage = require('opencage-api-client')
+const axios = require('axios')
 
 const CuisineModel = require('./models/cuisine.model')
 const RestaurantModel = require('./models/restaurant.model')
@@ -280,20 +282,39 @@ router.get('/catalogue/:restaurant_id', async (req, res) => {
     })
 })
 
+// geocoding Api's
 
-// router.get('/item/details', async (req, res) => {
+router.get('/getAddress', async (req, res) => {
 
-//         // const category = await CatalogueModel.findById(id)
-//         const itemDetails = await ItemModel.find()
+    const {lat, lng} = req.query;
+    let query = `${lat}+${lng}`
+    
 
+   let response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${query}&key=${process.env.OPENCAGE_API_KEY}`)
 
-//         res.send({
-//             message: "Retrieves Item Details Successfully",
-//             itemDetails
-//         })
-// })
+   res.send({
+    message: "retrieved response successfully",
+    result: response.data
+})
 
+})
 
+router.get('/getLocation', async (req, res) => {
+
+    const {search} = req.query;
+
+   const text = encodeURIComponent(search) 
+    
+    
+
+   let response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${text}&key=${process.env.OPENCAGE_API_KEY}`)
+
+   res.send({
+    message: "retrieved response successfully",
+    result: response.data
+})
+
+})
 
 
 module.exports = router

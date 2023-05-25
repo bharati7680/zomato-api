@@ -20,13 +20,15 @@
   "homepage": "https://github.com/tejasdesai0531/zomato-api#readme",
   "dependencies": {
     "@faker-js/faker": "^7.6.0",
+    "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-validator": "^7.0.1",
     "jsonwebtoken": "^9.0.0",
-    "mongoose": "^7.0.5"
+    "mongoose": "^7.0.5",
+    "opencage-api-client": "^1.0.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"

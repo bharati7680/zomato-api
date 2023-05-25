@@ -13,7 +13,8 @@ app.use(express.json())
 
 app.use('/api/auth', authRouter)
 app.use('/api/client', clientRouter)
-app.use('/api/restaurant', authCheck.authCheck, restaurantRouter)
+app.use('/api/restaurant', restaurantRouter)
+app.use('/api/opencagedata.com/geocode/v1/json?', restaurantRouter)
 app.use('/api/admin', adminRouter)
 
 
